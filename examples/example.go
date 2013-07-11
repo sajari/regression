@@ -18,5 +18,5 @@ func main() {
     r.AddDataPoint(regression.DataPoint{Observed : 50, Variables : []float64{188, 182, 0.0143}})
     r.AddDataPoint(regression.DataPoint{Observed : 90, Variables : []float64{783, 1148, 0.0129}})
     r.RunLinearRegression()
-    r.Dump()
+    r.Dump(true)
 }

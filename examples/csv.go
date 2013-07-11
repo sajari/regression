@@ -21,7 +21,7 @@ func main() {
 	var r regression.Regression
 
     // Load the CSV data as data points
-	dataFile, err := os.Open("data.csv")
+	dataFile, err := os.Open("data2.csv")
 	if err != nil {
 		fmt.Print(err, "\n")
 	}
@@ -59,5 +59,5 @@ func main() {
 
 	// Run the regression
     r.RunLinearRegression()
-    r.Dump()
+    r.Dump(false)
 }

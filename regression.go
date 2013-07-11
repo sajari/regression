@@ -181,14 +181,16 @@ func (r *Regression) calcRsquared() {
     }
 }
 
-func (r *Regression) Dump() {
-    fmt.Println("Variance Observed = ", r.VarianceObserved)
-    fmt.Println("Variance Predicted = ", r.VariancePredicted)
-    fmt.Println("R2 = ", r.Rsquared)
-    fmt.Println("-------------------------")
+func (r *Regression) Dump(data bool) {
     temp := r.Debug
     r.Debug = true
     r.calcPredicted()
     r.Debug = temp
-    fmt.Println("-------------------------\n")
+    if data == true {
+        fmt.Println("-------------------------")
+        fmt.Println("Variance Observed = ", r.VarianceObserved)
+        fmt.Println("Variance Predicted = ", r.VariancePredicted)
+        fmt.Println("R2 = ", r.Rsquared)
+        fmt.Println("-------------------------\n")
+    }
 }

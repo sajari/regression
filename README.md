@@ -27,6 +27,6 @@ Import the package, create a regression and add data to it. You can use as many 
         r.AddDataPoint(regression.DataPoint{Observed : 20, Variables : []float64{85, 833, 0.0567}})
         r.AddDataPoint(regression.DataPoint{Observed : 50, Variables : []float64{188, 182, 0.0143}})
         r.RunLinearRegression()
-        r.Dump()
+        r.Dump(true)
     }
 
