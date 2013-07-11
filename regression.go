@@ -118,7 +118,6 @@ func (r *Regression) RunLinearRegression() {
         }
 
     }
-    fmt.Println("\n-----------------------------------------------------------------\n")
     r.calcPredicted()
     r.calcVariance()
     r.calcRsquared()
@@ -169,6 +168,7 @@ func (r *Regression) calcVariance() {
     r.VarianceObserved = obvar / float64(observations)
     r.VariancePredicted = prvar / float64(observations)
     if r.Debug {
+        fmt.Println("N = ", observations)
         fmt.Println("Variance Observed = ", r.VarianceObserved)
         fmt.Println("Variance Predicted = ", r.VariancePredicted)
     }
@@ -190,9 +190,8 @@ func (r *Regression) Dump(data bool) {
     } else {
         r.calcPredicted()
     }
-    fmt.Println("-------------------------")
     fmt.Println("Variance Observed = ", r.VarianceObserved)
     fmt.Println("Variance Predicted = ", r.VariancePredicted)
     fmt.Println("R2 = ", r.Rsquared)
-    fmt.Println("-------------------------\n")
+    fmt.Println("\n-----------------------------------------------------------------\n")
 }

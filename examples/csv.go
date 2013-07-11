@@ -21,7 +21,7 @@ func main() {
 	var r regression.Regression
 
     // Load the CSV data as data points
-	dataFile, err := os.Open("data2.csv")
+	dataFile, err := os.Open("chevy-mechanics.csv")
 	if err != nil {
 		fmt.Print(err, "\n")
 	}
