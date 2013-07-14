@@ -16,6 +16,7 @@ type Regression struct {
     VarianceObserved float64
     VariancePredicted float64
     Debug bool
+    Initialised bool
 }
 
 type DataPoint struct {
@@ -56,15 +57,20 @@ func (r *Regression) GetVarName(i int) string {
 
 func (r *Regression) AddDataPoint(d DataPoint) {
     r.Data = append(r.Data, d)
+    r.Initialised = true
 }
 
 func (r *Regression) RunLinearRegression() {
-    // First move the data points into the right format
+    if !r.Initialised {
+        fmt.Println("Error: You need some observations to perform the regression.")
+        return
+    }
+
     observations := len(r.Data)
     numOfVars := len(r.Data[0].Variables)
 
     if observations < (numOfVars+1) {
-        fmt.Println("Error: Not enough observations to perform the regression.")
+        fmt.Println("Error: Not enough observations to to support this many variables.")
         return
     }
 
@@ -182,6 +188,10 @@ func (r *Regression) calcRsquared() {
 }
 
 func (r *Regression) Dump(data bool) {
+    if !r.Initialised {
+        fmt.Println("Error: You need some observations before you can dump the data.")
+        return
+    }
     temp := r.Debug
     if data == true {
         r.Debug = true
