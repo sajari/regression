@@ -114,16 +114,22 @@ func (r *Regression) RunLinearRegression() {
 
     // Output the regression results
     r.RegCoeff = make(map[int]float64, numOfVars)
-    fmt.Println("\n-----------------------------------------------------------------")
     for i, val := range c {
         r.RegCoeff[i] = val
-        if i == 0 {
-            fmt.Print("Predicted = ", val)
-        } else {
-            fmt.Print(" + ", r.GetVarName(i-1), " * ", val)
-        }
     }
-    fmt.Println("\n")
+
+	if r.Debug {
+		fmt.Println("\n-----------------------------------------------------------------")
+		for i, val := range c {
+			if i == 0 {
+				fmt.Print("Predicted = ", val)
+			} else {
+				fmt.Print(" + ", r.GetVarName(i-1), " * ", val)
+			}
+		}
+		fmt.Println("\n")
+	}
+
     r.calcPredicted()
     r.calcVariance()
     r.calcRsquared()
