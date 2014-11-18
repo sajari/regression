@@ -17,6 +17,7 @@ type Regression struct {
 	VariancePredicted float64
 	Debug             bool
 	Initialised       bool
+	Formula           string
 }
 
 type DataPoint struct {
@@ -118,16 +119,18 @@ func (r *Regression) RunLinearRegression() {
 		r.RegCoeff[i] = val
 	}
 
+	// Calculate the regression formula
+	for i, val := range c {
+		if i == 0 {
+			r.Formula = fmt.Sprintf("Predicted = %.4f", val)
+		} else {
+			r.Formula += fmt.Sprintf(" + %v*%.4f", r.GetVarName(i-1), val)
+		}
+	}
+
 	if r.Debug {
 		fmt.Println("\n-----------------------------------------------------------------")
-		for i, val := range c {
-			if i == 0 {
-				fmt.Print("Predicted = ", val)
-			} else {
-				fmt.Print(" + ", r.GetVarName(i-1), " * ", val)
-			}
-		}
-		fmt.Println("\n\n")
+		fmt.Printf("%v\n\n", r.Formula)
 	}
 
 	r.calcPredicted()

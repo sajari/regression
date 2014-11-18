@@ -1,6 +1,7 @@
 package regression
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -18,6 +19,8 @@ func Test(t *testing.T) {
 	r.AddDataPoint(DataPoint{Observed: 50, Variables: []float64{188, 182, 0.0143}})
 	r.AddDataPoint(DataPoint{Observed: 90, Variables: []float64{783, 1148, 0.0129}})
 	r.RunLinearRegression()
+
+	fmt.Printf("Regression formula:\n%v\n", r.Formula)
 
 	// TODO: This needs some real test data sets to test with.
 	// Above data is not examined.
