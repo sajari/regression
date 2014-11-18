@@ -127,7 +127,7 @@ func (r *Regression) RunLinearRegression() {
 				fmt.Print(" + ", r.GetVarName(i-1), " * ", val)
 			}
 		}
-		fmt.Println("\n")
+		fmt.Println("\n\n")
 	}
 
 	r.calcPredicted()
@@ -143,6 +143,8 @@ func (r *Regression) GetRegCoeff(i int) float64 {
 }
 
 func (r *Regression) calcPredicted() {
+	fmt.Println("\n")
+
 	observations := len(r.Data)
 	numOfVars := len(r.Data[0].Variables)
 	var predicted float64
@@ -158,12 +160,14 @@ func (r *Regression) calcPredicted() {
 		r.Data[i].Error = predicted - r.Data[i].Observed
 		r.Data[i].Predicted = predicted
 		if r.Debug {
-			fmt.Println(i, " Observed = ", r.Data[i].Observed, ", Predicted = ", predicted, ", Error = ", r.Data[i].Error)
+			fmt.Printf("%v. Observed = %v, Predicted = %v, Error = %v \n", i, r.Data[i].Observed, predicted, r.Data[i].Error)
 		}
 	}
 }
 
 func (r *Regression) calcVariance() {
+	fmt.Println("\n")
+
 	observations := len(r.Data)
 	var obtotal, prtotal, obvar, prvar float64
 	for i := 0; i < observations; i++ {
@@ -189,7 +193,7 @@ func (r *Regression) calcVariance() {
 func (r *Regression) calcRsquared() {
 	r.Rsquared = r.VariancePredicted / r.VarianceObserved
 	if r.Debug {
-		fmt.Println("R2 = ", r.Rsquared)
+		fmt.Println("\nR2 = ", r.Rsquared)
 	}
 }
 
