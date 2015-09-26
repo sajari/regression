@@ -2,10 +2,11 @@ package regression
 
 import (
 	"fmt"
-	"github.com/skelterjohn/go.matrix"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/skelterjohn/go.matrix"
 )
 
 type Regression struct {
@@ -210,7 +211,7 @@ func (r *Regression) Dump(data bool) {
 		return
 	}
 	temp := r.Debug
-	if data == true {
+	if data {
 		r.Debug = true
 		r.calcPredicted()
 		r.Debug = temp
