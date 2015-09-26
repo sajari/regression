@@ -1,15 +1,13 @@
-regression
-=======
+# regression
+[![Build Status](https://travis-ci.org/sajari/regression.svg?branch=master)](https://travis-ci.org/sajari/regression)
 
 Multivariable Linear Regression in Go (golang)
 
-installation
-------------
+## installation
 
     go get github.com/sajari/regression
 
-usage
------
+## usage
 
 Import the package, create a regression and add data to it. You can use as many variables as you like, in the below example there are 3 variables for each observation
 
