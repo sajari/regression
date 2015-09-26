@@ -1,6 +1,7 @@
 package regression
 
 import (
+	"errors"
 	"fmt"
 	"math"
 	"strconv"
@@ -62,18 +63,16 @@ func (r *Regression) AddDataPoint(d DataPoint) {
 	r.Initialised = true
 }
 
-func (r *Regression) RunLinearRegression() {
+func (r *Regression) RunLinearRegression() error {
 	if !r.Initialised {
-		fmt.Println("Error: You need some observations to perform the regression.")
-		return
+		return errors.New("you need some observations to perform the regression")
 	}
 
 	observations := len(r.Data)
 	numOfVars := len(r.Data[0].Variables)
 
 	if observations < (numOfVars + 1) {
-		fmt.Println("Error: Not enough observations to to support this many variables.")
-		return
+		return fmt.Errorf("not enough observations to to support %v variable(s)", numOfVars)
 	}
 
 	// Create some blank variable space
@@ -102,8 +101,7 @@ func (r *Regression) RunLinearRegression() {
 	q, reg := variables.QR()
 	qty, err := q.Transpose().Times(observed)
 	if err != nil {
-		fmt.Println(err)
-		return
+		return err
 	}
 	c := make([]float64, n)
 	for i := n - 1; i >= 0; i-- {
@@ -137,6 +135,7 @@ func (r *Regression) RunLinearRegression() {
 	r.calcPredicted()
 	r.calcVariance()
 	r.calcRsquared()
+	return nil
 }
 
 func (r *Regression) GetRegCoeff(i int) float64 {
@@ -205,10 +204,9 @@ func (r *Regression) calcRsquared() {
 	}
 }
 
-func (r *Regression) Dump(data bool) {
+func (r *Regression) Dump(data bool) error {
 	if !r.Initialised {
-		fmt.Println("Error: You need some observations before you can dump the data.")
-		return
+		return errors.New("you need some observations before you can dump the data")
 	}
 	temp := r.Debug
 	if data {
@@ -223,4 +221,5 @@ func (r *Regression) Dump(data bool) {
 	fmt.Println("Variance Predicted = ", r.VariancePredicted)
 	fmt.Println("R2 = ", r.Rsquared)
 	fmt.Println("-----------------------------------------------------------------\n")
+	return nil
 }
