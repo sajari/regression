@@ -146,7 +146,9 @@ func (r *Regression) GetRegCoeff(i int) float64 {
 }
 
 func (r *Regression) calcPredicted() {
-	fmt.Println("\n")
+	if r.Debug {
+		fmt.Println("\n")
+	}
 
 	observations := len(r.Data)
 	numOfVars := len(r.Data[0].Variables)
@@ -169,7 +171,9 @@ func (r *Regression) calcPredicted() {
 }
 
 func (r *Regression) calcVariance() {
-	fmt.Println("\n")
+	if r.Debug {
+		fmt.Println("\n")
+	}
 
 	observations := len(r.Data)
 	var obtotal, prtotal, obvar, prvar float64
