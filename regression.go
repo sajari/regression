@@ -220,6 +220,7 @@ func (r *Regression) Dump(data bool) error {
 	fmt.Println("Variance Observed = ", r.VarianceObserved)
 	fmt.Println("Variance Predicted = ", r.VariancePredicted)
 	fmt.Println("R2 = ", r.Rsquared)
+	fmt.Println("Formula = ", r.Formula)
 	fmt.Println("-----------------------------------------------------------------\n")
 	return nil
 }
