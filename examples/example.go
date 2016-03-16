@@ -4,17 +4,19 @@ import "github.com/sajari/regression"
 
 func main() {
 	var r regression.Regression
-	//r.Debug = true
-	r.SetObservedName("Distance")
-	r.SetVarName(0, "Weight")
-	r.SetVarName(1, "Height")
-	r.SetVarName(2, "Blood sugar")
-	r.AddDataPoint(regression.DataPoint{Observed: 98, Variables: []float64{483, 343, 0.0386}})
-	r.AddDataPoint(regression.DataPoint{Observed: 75, Variables: []float64{227, 419, 0.0705}})
-	r.AddDataPoint(regression.DataPoint{Observed: 0, Variables: []float64{380, 666, 0.0245}})
-	r.AddDataPoint(regression.DataPoint{Observed: 20, Variables: []float64{85, 833, 0.0567}})
-	r.AddDataPoint(regression.DataPoint{Observed: 50, Variables: []float64{188, 182, 0.0143}})
-	r.AddDataPoint(regression.DataPoint{Observed: 90, Variables: []float64{783, 1148, 0.0129}})
+	r.SetObservedName("Z")
+	r.SetVarName(0, "A")
+	r.SetVarName(1, "B")
+	r.SetVarName(2, "C")
+	// Z = 12 + 1A + 2B +3C
+	r.AddDataPoint(regression.DataPoint{Observed: 12, Variables: []float64{0, 0, 0}})
+	r.AddDataPoint(regression.DataPoint{Observed: 13, Variables: []float64{1, 0, 0}})
+	r.AddDataPoint(regression.DataPoint{Observed: 14, Variables: []float64{0, 1, 0}})
+	r.AddDataPoint(regression.DataPoint{Observed: 15, Variables: []float64{0, 0, 1}})
+	r.AddDataPoint(regression.DataPoint{Observed: 14, Variables: []float64{2, 0, 0}})
+	r.AddDataPoint(regression.DataPoint{Observed: 16, Variables: []float64{0, 2, 0}})
+	r.AddDataPoint(regression.DataPoint{Observed: 18, Variables: []float64{0, 0, 2}})
+
 	r.RunLinearRegression()
 	r.Dump(true)
 }
