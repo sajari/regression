@@ -1,59 +1,75 @@
-# regression
+regression
+=======
 [![Build Status](https://travis-ci.org/sajari/regression.svg?branch=master)](https://travis-ci.org/sajari/regression)
+[![License][license-image]][license-url]
+
+[license-image]: http://img.shields.io/badge/license-MIT-green.svg?style=flat-square
+[license-url]: LICENSE.txt
+
 
 Multivariable Linear Regression in Go (golang)
 
-## Install
+installation
+------------
 
-```
-go get github.com/sajari/regression
-```
+    go get github.com/sajari/regression
 
-## Usage
+usage
+-----
 
 Import the package, create a regression and add data to it. You can use as many variables as you like, in the below example there are 3 variables for each observation
 
-```go
-package main
-
 import "github.com/sajari/regression"
 
+```go
 func main() {
-    var r regression.Regression
-    r.SetObservedName("Z")
-    r.SetVarName(0, "A")
-    r.SetVarName(1, "B")
-    r.SetVarName(2, "C")
-    // Z = 12 + 1A + 2B +3C
-    r.AddDataPoint(regression.DataPoint{Observed: 12, Variables: []float64{0, 0, 0}})
-    r.AddDataPoint(regression.DataPoint{Observed: 13, Variables: []float64{1, 0, 0}})
-    r.AddDataPoint(regression.DataPoint{Observed: 14, Variables: []float64{0, 1, 0}})
-    r.AddDataPoint(regression.DataPoint{Observed: 15, Variables: []float64{0, 0, 1}})
-    r.AddDataPoint(regression.DataPoint{Observed: 14, Variables: []float64{2, 0, 0}})
-    r.AddDataPoint(regression.DataPoint{Observed: 16, Variables: []float64{0, 2, 0}})
-    r.AddDataPoint(regression.DataPoint{Observed: 18, Variables: []float64{0, 0, 2}})
+    r := new(Regression)
+    r.SetObserved("Murders per annum per 1,000,000 inhabitants")
+    r.SetVar(0, "Inhabitants")
+    r.SetVar(1, "Percent with incomes below $5000")
+    r.SetVar(2, "Percent unemployed")
+    r.Train(
+        DataPoint(11.2, []float64{587000, 16.5, 6.2}),
+        DataPoint(13.4, []float64{643000, 20.5, 6.4}),
+        DataPoint(40.7, []float64{635000, 26.3, 9.3}),
+        DataPoint(5.3, []float64{692000, 16.5, 5.3}),
+        DataPoint(24.8, []float64{1248000, 19.2, 7.3}),
+        DataPoint(12.7, []float64{643000, 16.5, 5.9}),
+        DataPoint(20.9, []float64{1964000, 20.2, 6.4}),
+        DataPoint(35.7, []float64{1531000, 21.3, 7.6}),
+        DataPoint(8.7, []float64{713000, 17.2, 4.9}),
+        DataPoint(9.6, []float64{749000, 14.3, 6.4}),
+        DataPoint(14.5, []float64{7895000, 18.1, 6}),
+        DataPoint(26.9, []float64{762000, 23.1, 7.4}),
+        DataPoint(15.7, []float64{2793000, 19.1, 5.8}),
+        DataPoint(36.2, []float64{741000, 24.7, 8.6}),
+        DataPoint(18.1, []float64{625000, 18.6, 6.5}),
+        DataPoint(28.9, []float64{854000, 24.9, 8.3}),
+        DataPoint(14.9, []float64{716000, 17.9, 6.7}),
+        DataPoint(25.8, []float64{921000, 22.4, 8.6}),
+        DataPoint(21.7, []float64{595000, 20.2, 8.4}),
+        DataPoint(25.7, []float64{3353000, 16.9, 6.7}),
+    )
+    r.Run()
 
-    r.RunLinearRegression()
-    r.Dump(true)
+    fmt.Printf("Regression formula:\n%v\n", r.Formula)
+    fmt.Printf("Regression:\n%s\n", r)
 }
 ```
 
-```shell
-$ go run main.go
+Note: You can also add data points one by one.
 
+Once calculated you can print the data, look at the R^2, Variance, residuals, etc. You can also access the coefficients directly to use elsewhere, e.g.
 
-0. Observed = 12, Predicted = 11.999999999999995, Error = -5.329070518200751e-15
-1. Observed = 13, Predicted = 12.999999999999998, Error = -1.7763568394002505e-15
-2. Observed = 14, Predicted = 13.999999999999996, Error = -3.552713678800501e-15
-3. Observed = 15, Predicted = 14.999999999999998, Error = -1.7763568394002505e-15
-4. Observed = 14, Predicted = 14.000000000000002, Error = 1.7763568394002505e-15
-5. Observed = 16, Predicted = 15.999999999999998, Error = -1.7763568394002505e-15
-6. Observed = 18, Predicted = 18, Error = 0
+```go
+// Get the coefficient for the "Inhabitants" variable 0:
+c := r.Coeff(0)
+``` 
 
-N =  7
-Variance Observed =  3.3877551020408165
-Variance Predicted =  3.3877551020408205
-R2 =  1.000000000000001
-Formula =  Predicted = 12.0000 + A*1.0000 + B*2.0000 + C*3.0000
-----------------------------------
+You can also use the model to predict new data points
+
+```go
+prediction, err := r.Predict([]float64{587000, 16.5, 6.2})
 ```
+
+
