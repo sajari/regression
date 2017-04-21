@@ -12,7 +12,8 @@ import (
 
 var (
 	errNotEnoughData = errors.New("Not enough data points")
-	errTooManyvars   = errors.New("Not enough observations to to support this many variables.")
+	errTooManyvars   = errors.New("Not enough observations to to support this many variables")
+	errRegressionRun = errors.New("Regression has already been run")
 )
 
 type Regression struct {
@@ -24,6 +25,8 @@ type Regression struct {
 	VariancePredicted float64
 	initialised       bool
 	Formula           string
+	crosses           []featureCross
+	hasRun            bool
 }
 
 type dataPoint struct {
@@ -83,6 +86,11 @@ func (r *Regression) GetVar(i int) string {
 	return x
 }
 
+// Registers a feature cross to be applied to the data points.
+func (r *Regression) AddCross(cross featureCross) {
+	r.crosses = append(r.crosses, cross)
+}
+
 // Train the regression with some data points
 func (r *Regression) Train(d ...*dataPoint) {
 	r.data = append(r.data, d...)
@@ -91,11 +99,36 @@ func (r *Regression) Train(d ...*dataPoint) {
 	}
 }
 
+// Apply any feature crosses, generating new observations and updating the data points, as well as
+// populating variable names for the feature crosses.
+func (r *Regression) applyCrosses() {
+	unusedVariableIndexCursor := len(r.data[0].Variables)
+	for _, point := range r.data {
+		for _, cross := range r.crosses {
+			point.Variables = append(point.Variables, cross.Calculate(point.Variables)...)
+		}
+	}
+
+	if len(r.names.vars) == 0 {
+		r.names.vars = make(map[int]string, 5)
+	}
+	for _, cross := range r.crosses {
+		unusedVariableIndexCursor += cross.ExtendNames(r.names.vars, unusedVariableIndexCursor)
+	}
+}
+
 // Run the regression
 func (r *Regression) Run() error {
 	if !r.initialised {
 		return errNotEnoughData
 	}
+	if r.hasRun {
+		return errRegressionRun
+	}
+
+	//apply any features crosses
+	r.applyCrosses()
+	r.hasRun = true
 
 	observations := len(r.data)
 	numOfvars := len(r.data[0].Variables)
