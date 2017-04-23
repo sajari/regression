@@ -29,16 +29,37 @@ func (c *functionalCross) ExtendNames(input map[int]string, initialSize int) int
 	return len(c.boundVars)
 }
 
+// Feature cross based on computing the power of an input.
 func PowCross(i int, power float64) featureCross {
 	return &functionalCross{
 		functionName: "^" + strconv.FormatFloat(power, 'f', -1, 64),
 		boundVars:    []int{i},
 		crossFn: func(vars []float64) []float64 {
-			if i >= len(vars) {
-				panic("Cross specified out of bounds")
-			}
 
 			return []float64{math.Pow(vars[i], power)}
+		},
+	}
+}
+
+// Feature cross based on the multiplication of multiple inputs.
+func MultiplierCross(vars ...int) featureCross {
+	name := ""
+	for i, v := range vars {
+		name += strconv.Itoa(v)
+		if i < (len(vars) - 1) {
+			name += "*"
+		}
+	}
+
+	return &functionalCross{
+		functionName: name,
+		boundVars:    vars,
+		crossFn: func(input []float64) []float64 {
+			var output float64 = 1
+			for _, variableIndex := range vars {
+				output *= input[variableIndex]
+			}
+			return []float64{output}
 		},
 	}
 }

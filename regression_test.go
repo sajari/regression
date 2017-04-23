@@ -63,8 +63,11 @@ func TestCrossApply(t *testing.T) {
 		DataPoint(6, []float64{2}),
 		DataPoint(20, []float64{4}),
 		DataPoint(30, []float64{5}),
+		DataPoint(72, []float64{8}),
+		DataPoint(156, []float64{12}),
 	)
 	r.AddCross(PowCross(0, 2))
+	r.AddCross(PowCross(0, 7))
 	err := r.Run()
 	if err != nil {
 		t.Error(err)
@@ -89,5 +92,14 @@ func TestCrossApply(t *testing.T) {
 	//  We know this set has an R^2 above 80
 	if r.R2 < 0.8 {
 		t.Errorf("R^2 was %.2f, but we expected > 80", r.R2)
+	}
+
+	// Test that predict uses the cross as well
+	val, err := r.Predict([]float64{6})
+	if err != nil {
+		t.Error(err)
+	}
+	if val <= 41.999 && val >= 42.001 {
+		t.Errorf("Expected 42, got %.2f", val)
 	}
 }

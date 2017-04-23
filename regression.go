@@ -51,6 +51,12 @@ func (r *Regression) Predict(vars []float64) (float64, error) {
 	if !r.initialised {
 		return 0, errNotEnoughData
 	}
+
+	// apply any features crosses to vars
+	for _, cross := range r.crosses {
+		vars = append(vars, cross.Calculate(vars)...)
+	}
+
 	p := r.Coeff(0)
 	for j := 1; j < len(r.data[0].Variables)+1; j++ {
 		p += r.Coeff(j) * vars[j-1]
@@ -101,6 +107,7 @@ func (r *Regression) Train(d ...*dataPoint) {
 
 // Apply any feature crosses, generating new observations and updating the data points, as well as
 // populating variable names for the feature crosses.
+// this should only be run once, as part of Run().
 func (r *Regression) applyCrosses() {
 	unusedVariableIndexCursor := len(r.data[0].Variables)
 	for _, point := range r.data {
