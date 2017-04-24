@@ -54,3 +54,52 @@ func TestRun(t *testing.T) {
 		t.Errorf("R^2 was %.2f, but we expected > 80", r.R2)
 	}
 }
+
+func TestCrossApply(t *testing.T) {
+	r := new(Regression)
+	r.SetObserved("Input-Squared plus Input")
+	r.SetVar(0, "Input")
+	r.Train(
+		DataPoint(6, []float64{2}),
+		DataPoint(20, []float64{4}),
+		DataPoint(30, []float64{5}),
+		DataPoint(72, []float64{8}),
+		DataPoint(156, []float64{12}),
+	)
+	r.AddCross(PowCross(0, 2))
+	r.AddCross(PowCross(0, 7))
+	err := r.Run()
+	if err != nil {
+		t.Error(err)
+	}
+
+	fmt.Printf("Regression formula:\n%v\n", r.Formula)
+	fmt.Printf("Regression:\n%s\n", r)
+	if r.names.vars[1] != "(Input)^2" {
+		t.Error("Name incorrect")
+	}
+
+	for i, c := range r.coeff {
+		if i == 0 {
+			// This is the offset and not a coeff
+			continue
+		}
+		if c < 0 {
+			t.Errorf("Coefficient is negative, but shouldn't be: %.2f", c)
+		}
+	}
+
+	//  We know this set has an R^2 above 80
+	if r.R2 < 0.8 {
+		t.Errorf("R^2 was %.2f, but we expected > 80", r.R2)
+	}
+
+	// Test that predict uses the cross as well
+	val, err := r.Predict([]float64{6})
+	if err != nil {
+		t.Error(err)
+	}
+	if val <= 41.999 && val >= 42.001 {
+		t.Errorf("Expected 42, got %.2f", val)
+	}
+}

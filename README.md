@@ -70,7 +70,7 @@ Once calculated you can print the data, look at the R^2, Variance, residuals, et
 ```go
 // Get the coefficient for the "Inhabitants" variable 0:
 c := r.Coeff(0)
-``` 
+```
 
 You can also use the model to predict new data points
 
@@ -78,4 +78,15 @@ You can also use the model to predict new data points
 prediction, err := r.Predict([]float64{587000, 16.5, 6.2})
 ```
 
+Feature crosses are supported so your model can capture fixed non-linear relationships
 
+```go
+
+r.Train(
+  regression.DataPoint(11.2, []float64{587000, 16.5, 6.2}),
+)
+//Add a new feature which is the first variable (index 0) to the power of 2
+r.AddCross(PowCross(0, 2))
+r.Run()
+
+```
