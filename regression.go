@@ -278,3 +278,31 @@ func (r *Regression) String() string {
 	str += fmt.Sprintf("\nR2 = %v\n", r.R2)
 	return str
 }
+
+func MakeDataPoints(a [][]float64, obsIndex int) []*dataPoint {
+	if obsIndex != 0 {
+		return perverseMakeDataPoints(a, obsIndex)
+	}
+
+	retVal := make([]*dataPoint, 0, len(a))
+	for _, r := range a {
+		retVal = append(retVal, DataPoint(r[0], r[1:]))
+	}
+	return retVal
+}
+
+func perverseMakeDataPoints(a [][]float64, obsIndex int) []*dataPoint {
+	retVal := make([]*dataPoint, 0, len(a))
+	for _, r := range a {
+		obs := r[obsIndex]
+		others := make([]float64, 0, len(r)-1)
+		for i, c := range r {
+			if i == obsIndex {
+				continue
+			}
+			others = append(others, c)
+		}
+		retVal = append(retVal, DataPoint(obs, others))
+	}
+	return retVal
+}
