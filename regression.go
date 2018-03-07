@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/skelterjohn/go.matrix"
+	"gonum.org/v1/gonum/mat"
 )
 
 var (
@@ -145,8 +145,8 @@ func (r *Regression) Run() error {
 	}
 
 	// Create some blank variable space
-	observed := matrix.Zeros(observations, 1)
-	variables := matrix.Zeros(observations, numOfvars+1)
+	observed := mat.NewDense(observations, 1, nil)
+	variables := mat.NewDense(observations, numOfvars+1, nil)
 
 	for i := 0; i < observations; i++ {
 		observed.Set(i, 0, r.data[i].Observed)
@@ -160,19 +160,24 @@ func (r *Regression) Run() error {
 	}
 
 	// Now run the regression
-	n := variables.Cols()
-	q, reg := variables.QR()
-	qty, err := q.Transpose().Times(observed)
-	if err != nil {
-		return err
-	}
+	_, n := variables.Dims() // cols
+	qr := new(mat.QR)
+	qr.Factorize(variables)
+	q := qr.QTo(nil)
+	reg := qr.RTo(nil)
+
+	qtr := q.T()
+	qtrd := mat.DenseCopyOf(qtr)
+	qty := new(mat.Dense)
+	qty.Mul(qtrd, observed)
+
 	c := make([]float64, n)
 	for i := n - 1; i >= 0; i-- {
-		c[i] = qty.Get(i, 0)
+		c[i] = qty.At(i, 0)
 		for j := i + 1; j < n; j++ {
-			c[i] -= c[j] * reg.Get(i, j)
+			c[i] -= c[j] * reg.At(i, j)
 		}
-		c[i] /= reg.Get(i, i)
+		c[i] /= reg.At(i, i)
 	}
 
 	// Output the regression results
