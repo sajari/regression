@@ -142,4 +142,17 @@ func TestMakeDataPoints(t *testing.T) {
 		}
 	}
 
+	correct = []float64{1, 2, 3}
+	dps = MakeDataPoints(a, 3)
+	for _, dp := range dps {
+		for i, v := range dp.Variables {
+			if correct[i] != v {
+				t.Errorf("Expected variables to be %v. Got %v instead", correct, dp.Variables)
+			}
+		}
+		if dp.Observed != 4.0 {
+			t.Error("Expected observed to be the same as the index")
+		}
+	}
+
 }
