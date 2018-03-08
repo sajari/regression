@@ -103,3 +103,56 @@ func TestCrossApply(t *testing.T) {
 		t.Errorf("Expected 42, got %.2f", val)
 	}
 }
+
+func TestMakeDataPoints(t *testing.T) {
+	a := [][]float64{
+		{1, 2, 3, 4},
+		{2, 2, 3, 4},
+		{3, 2, 3, 4},
+	}
+	correct := []float64{2, 3, 4}
+
+	dps := MakeDataPoints(a, 0)
+	for i, dp := range dps {
+		for i, v := range dp.Variables {
+			if correct[i] != v {
+				t.Errorf("Expected variables to be %v. Got %v instead", correct, dp.Variables)
+			}
+		}
+		if dp.Observed != float64(i+1) {
+			t.Error("Expected observed to be the same as the index")
+		}
+	}
+
+	a = [][]float64{
+		{1, 2, 3, 4},
+		{1, 2, 3, 4},
+		{1, 2, 3, 4},
+	}
+	correct = []float64{1, 3, 4}
+	dps = MakeDataPoints(a, 1)
+	for _, dp := range dps {
+		for i, v := range dp.Variables {
+			if correct[i] != v {
+				t.Errorf("Expected variables to be %v. Got %v instead", correct, dp.Variables)
+			}
+		}
+		if dp.Observed != 2.0 {
+			t.Error("Expected observed to be the same as the index")
+		}
+	}
+
+	correct = []float64{1, 2, 3}
+	dps = MakeDataPoints(a, 3)
+	for _, dp := range dps {
+		for i, v := range dp.Variables {
+			if correct[i] != v {
+				t.Errorf("Expected variables to be %v. Got %v instead", correct, dp.Variables)
+			}
+		}
+		if dp.Observed != 4.0 {
+			t.Error("Expected observed to be the same as the index")
+		}
+	}
+
+}

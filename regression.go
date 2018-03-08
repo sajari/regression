@@ -278,3 +278,44 @@ func (r *Regression) String() string {
 	str += fmt.Sprintf("\nR2 = %v\n", r.R2)
 	return str
 }
+
+// MakeDataPoints makes a `[]*dataPoint` from a `[][]float64`. The expected fomat for the input is a row-major [][]float64.
+// That is to say the first slice represents a row, and the second represents the cols.
+// Furthermore it is expected that all the col slices are of the same length.
+// The obsIndex parameter indicates which column should be used
+func MakeDataPoints(a [][]float64, obsIndex int) []*dataPoint {
+	if obsIndex != 0 && obsIndex != len(a[0])-1 {
+		return perverseMakeDataPoints(a, obsIndex)
+	}
+
+	retVal := make([]*dataPoint, 0, len(a))
+	if obsIndex == 0 {
+		for _, r := range a {
+			retVal = append(retVal, DataPoint(r[0], r[1:]))
+		}
+		return retVal
+	}
+
+	// otherwise the observation is expected to be the last col
+	last := len(a[0]) - 1
+	for _, r := range a {
+		retVal = append(retVal, DataPoint(r[last], r[:last]))
+	}
+	return retVal
+}
+
+func perverseMakeDataPoints(a [][]float64, obsIndex int) []*dataPoint {
+	retVal := make([]*dataPoint, 0, len(a))
+	for _, r := range a {
+		obs := r[obsIndex]
+		others := make([]float64, 0, len(r)-1)
+		for i, c := range r {
+			if i == obsIndex {
+				continue
+			}
+			others = append(others, c)
+		}
+		retVal = append(retVal, DataPoint(obs, others))
+	}
+	return retVal
+}
