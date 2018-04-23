@@ -41,6 +41,10 @@ type describe struct {
 	vars map[int]string
 }
 
+// DataPoints is a slice of *dataPoint .
+// This type allows for easier constuction of training data points
+type DataPoints []*dataPoint
+
 // Creates a new dataPoint
 func DataPoint(obs float64, vars []float64) *dataPoint {
 	return &dataPoint{Observed: obs, Variables: vars}
