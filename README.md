@@ -14,6 +14,8 @@ installation
 
     $ go get github.com/sajari/regression
 
+Supports Go 1.8+
+
 example usage
 -------------
 
