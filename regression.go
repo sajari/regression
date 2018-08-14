@@ -11,11 +11,15 @@ import (
 )
 
 var (
-	errNotEnoughData = errors.New("Not enough data points")
-	errTooManyvars   = errors.New("Not enough observations to to support this many variables")
-	errRegressionRun = errors.New("Regression has already been run")
+	// ErrNotEnoughData signals that there weren't enough datapoint to train the model.
+	ErrNotEnoughData = errors.New("not enough data points")
+	// ErrTooManyVars signals that there are too many variables for the number of observations being made.
+	ErrTooManyVars = errors.New("not enough observations to to support this many variables")
+	// ErrRegressionRun signals that the Run method has already been called on the trained dataset.
+	ErrRegressionRun = errors.New("regression has already been run")
 )
 
+// Regression is the exposed data structure for interacting with the API
 type Regression struct {
 	names             describe
 	data              []*dataPoint
@@ -41,19 +45,19 @@ type describe struct {
 	vars map[int]string
 }
 
-// DataPoints is a slice of *dataPoint .
-// This type allows for easier constuction of training data points
+// DataPoints is a slice of pointer dataPoints.
+// This type allows for easier constuction of training data points.
 type DataPoints []*dataPoint
 
-// Creates a new dataPoint
+// DataPoint creates a well formed *datapoint used for training.
 func DataPoint(obs float64, vars []float64) *dataPoint {
 	return &dataPoint{Observed: obs, Variables: vars}
 }
 
-// Predict updates the "Predicted" value for the input dataPoint
+// Predict updates the "Predicted" value for the inputed features.
 func (r *Regression) Predict(vars []float64) (float64, error) {
 	if !r.initialised {
-		return 0, errNotEnoughData
+		return 0, ErrNotEnoughData
 	}
 
 	// apply any features crosses to vars
@@ -68,17 +72,17 @@ func (r *Regression) Predict(vars []float64) (float64, error) {
 	return p, nil
 }
 
-// Set the name of the observed value
+// SetObserved sets the name of the observed value.
 func (r *Regression) SetObserved(name string) {
 	r.names.obs = name
 }
 
-// Get the name of the observed value
+// GetObserved Gets the name of the observed value.
 func (r *Regression) GetObserved() string {
 	return r.names.obs
 }
 
-// Set the name of variable i
+// SetVar sets the name of variable i.
 func (r *Regression) SetVar(i int, name string) {
 	if len(r.names.vars) == 0 {
 		r.names.vars = make(map[int]string, 5)
@@ -86,7 +90,7 @@ func (r *Regression) SetVar(i int, name string) {
 	r.names.vars[i] = name
 }
 
-// Get the name of variable i
+// GetVar gets the name of variable i.
 func (r *Regression) GetVar(i int) string {
 	x := r.names.vars[i]
 	if x == "" {
@@ -96,12 +100,12 @@ func (r *Regression) GetVar(i int) string {
 	return x
 }
 
-// Registers a feature cross to be applied to the data points.
+// AddCross registers a feature cross to be applied to the data points.
 func (r *Regression) AddCross(cross featureCross) {
 	r.crosses = append(r.crosses, cross)
 }
 
-// Train the regression with some data points
+// Train the regression with some data points.
 func (r *Regression) Train(d ...*dataPoint) {
 	r.data = append(r.data, d...)
 	if len(r.data) > 2 {
@@ -128,13 +132,16 @@ func (r *Regression) applyCrosses() {
 	}
 }
 
-// Run the regression
+// Run determines if there is enough data present to run the regression
+// and whether or not the training has already been completed.
+// Once the above checks have passed feature crosses are applied if any
+// and the model is trained using QR decomposition.
 func (r *Regression) Run() error {
 	if !r.initialised {
-		return errNotEnoughData
+		return ErrNotEnoughData
 	}
 	if r.hasRun {
-		return errRegressionRun
+		return ErrRegressionRun
 	}
 
 	//apply any features crosses
@@ -145,7 +152,7 @@ func (r *Regression) Run() error {
 	numOfvars := len(r.data[0].Variables)
 
 	if observations < (numOfvars + 1) {
-		return errTooManyvars
+		return ErrTooManyVars
 	}
 
 	// Create some blank variable space
@@ -201,7 +208,7 @@ func (r *Regression) Run() error {
 	return nil
 }
 
-// Return the calulated coefficient for variable i
+// Coeff returns the calulated coefficient for variable i.
 func (r *Regression) Coeff(i int) float64 {
 	if len(r.coeff) == 0 {
 		return 0
@@ -255,7 +262,7 @@ func (r *Regression) calcResiduals() string {
 	return str
 }
 
-// Display a dataPoint as a string
+// String satisfies the stringer interface to display a dataPoint as a string.
 func (d *dataPoint) String() string {
 	str := fmt.Sprintf("%.2f", d.Observed)
 	for _, v := range d.Variables {
@@ -264,10 +271,10 @@ func (d *dataPoint) String() string {
 	return str
 }
 
-// Display a regression as a string
+// String satisfies the stringer interface to display a regression as a string.
 func (r *Regression) String() string {
 	if !r.initialised {
-		return errNotEnoughData.Error()
+		return ErrNotEnoughData.Error()
 	}
 	str := fmt.Sprintf("%v", r.GetObserved())
 	for i := 0; i < len(r.names.vars); i++ {
