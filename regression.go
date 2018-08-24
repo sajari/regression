@@ -196,9 +196,9 @@ func (r *Regression) Run() error {
 	for i, val := range c {
 		r.coeff[i] = val
 		if i == 0 {
-			r.Formula = fmt.Sprintf("Predicted = %.2f", val)
+			r.Formula = fmt.Sprintf("Predicted = %.4f", val)
 		} else {
-			r.Formula += fmt.Sprintf(" + %v*%.2f", r.GetVar(i-1), val)
+			r.Formula += fmt.Sprintf(" + %v*%.4f", r.GetVar(i-1), val)
 		}
 	}
 
