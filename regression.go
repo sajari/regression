@@ -171,9 +171,8 @@ func (r *Regression) Run() error {
 	reg := qr.RTo(nil)
 
 	qtr := q.T()
-	qtrd := mat.DenseCopyOf(qtr)
 	qty := new(mat.Dense)
-	qty.Mul(qtrd, observed)
+	qty.Mul(qtr, observed)
 
 	c := make([]float64, n)
 	for i := n - 1; i >= 0; i-- {

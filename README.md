@@ -1,11 +1,12 @@
 regression
 =======
+[![GoDoc](https://godoc.org/github.com/sajari/regression?status.svg)](https://godoc.org/github.com/sajari/regression)
+[![Go Report Card](https://goreportcard.com/badge/sajari/regression)](https://goreportcard.com/report/sajari/regression)
 [![Build Status](https://travis-ci.org/sajari/regression.svg?branch=master)](https://travis-ci.org/sajari/regression)
 [![License][license-image]][license-url]
 
 [license-image]: http://img.shields.io/badge/license-MIT-green.svg?style=flat-square
 [license-url]: LICENSE.txt
-
 
 Multivariable Linear Regression in Go (golang)
 
