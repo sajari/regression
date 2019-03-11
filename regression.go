@@ -73,7 +73,7 @@ func (r *Regression) SetObserved(name string) {
 	r.names.obs = name
 }
 
-// Get the name of the observed value
+// GetObserved gets the name of the observed value
 func (r *Regression) GetObserved() string {
 	return r.names.obs
 }
@@ -86,7 +86,7 @@ func (r *Regression) SetVar(i int, name string) {
 	r.names.vars[i] = name
 }
 
-// Get the name of variable i
+// GetVar gets the name of variable i
 func (r *Regression) GetVar(i int) string {
 	x := r.names.vars[i]
 	if x == "" {
@@ -200,7 +200,7 @@ func (r *Regression) Run() error {
 	return nil
 }
 
-// Return the calulated coefficient for variable i
+// Coeff returns the calulated coefficient for variable i
 func (r *Regression) Coeff(i int) float64 {
 	if len(r.coeff) == 0 {
 		return 0
