@@ -42,7 +42,7 @@ type describe struct {
 }
 
 // DataPoints is a slice of *dataPoint .
-// This type allows for easier constuction of training data points
+// This type allows for easier construction of training data points
 type DataPoints []*dataPoint
 
 // Creates a new dataPoint
@@ -200,7 +200,7 @@ func (r *Regression) Run() error {
 	return nil
 }
 
-// Coeff returns the calulated coefficient for variable i
+// Coeff returns the calculated coefficient for variable i
 func (r *Regression) Coeff(i int) float64 {
 	if len(r.coeff) == 0 {
 		return 0
