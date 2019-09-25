@@ -167,8 +167,10 @@ func (r *Regression) Run() error {
 	_, n := variables.Dims() // cols
 	qr := new(mat.QR)
 	qr.Factorize(variables)
-	q := qr.QTo(nil)
-	reg := qr.RTo(nil)
+	q := new(mat.Dense)
+	reg := new(mat.Dense)
+	qr.QTo(q)
+	qr.RTo(reg)
 
 	qtr := q.T()
 	qty := new(mat.Dense)
