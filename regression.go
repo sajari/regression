@@ -19,7 +19,7 @@ var (
 	ErrRegressionRun = errors.New("regression has already been run")
 )
 
-// Regression is the exposed data structure for interacting with the API
+// Regression is the exposed data structure for interacting with the API.
 type Regression struct {
 	names             describe
 	data              []*dataPoint
@@ -45,8 +45,8 @@ type describe struct {
 	vars map[int]string
 }
 
-// DataPoints is a slice of pointer dataPoints.
-// This type allows for easier constuction of training data points.
+// DataPoints is a slice of *dataPoint
+// This type allows for easier construction of training data points.
 type DataPoints []*dataPoint
 
 // DataPoint creates a well formed *datapoint used for training.
@@ -77,7 +77,7 @@ func (r *Regression) SetObserved(name string) {
 	r.names.obs = name
 }
 
-// GetObserved Gets the name of the observed value.
+// GetObserved gets the name of the observed value.
 func (r *Regression) GetObserved() string {
 	return r.names.obs
 }
@@ -90,7 +90,7 @@ func (r *Regression) SetVar(i int, name string) {
 	r.names.vars[i] = name
 }
 
-// GetVar gets the name of variable i.
+// GetVar gets the name of variable i
 func (r *Regression) GetVar(i int) string {
 	x := r.names.vars[i]
 	if x == "" {
@@ -174,13 +174,14 @@ func (r *Regression) Run() error {
 	_, n := variables.Dims() // cols
 	qr := new(mat.QR)
 	qr.Factorize(variables)
-	q := qr.QTo(nil)
-	reg := qr.RTo(nil)
+	q := new(mat.Dense)
+	reg := new(mat.Dense)
+	qr.QTo(q)
+	qr.RTo(reg)
 
 	qtr := q.T()
-	qtrd := mat.DenseCopyOf(qtr)
 	qty := new(mat.Dense)
-	qty.Mul(qtrd, observed)
+	qty.Mul(qtr, observed)
 
 	c := make([]float64, n)
 	for i := n - 1; i >= 0; i-- {
@@ -208,7 +209,7 @@ func (r *Regression) Run() error {
 	return nil
 }
 
-// Coeff returns the calulated coefficient for variable i.
+// Coeff returns the calculated coefficient for variable i.
 func (r *Regression) Coeff(i int) float64 {
 	if len(r.coeff) == 0 {
 		return 0
