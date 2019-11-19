@@ -217,6 +217,18 @@ func (r *Regression) Coeff(i int) float64 {
 	return r.coeff[i]
 }
 
+// GetCoeffs returns the calculated coefficients. The element at index 0 is the offset.
+func (r *Regression) GetCoeffs() []float64 {
+	if len(r.coeff) == 0 {
+		return nil
+	}
+	coeffs := make([]float64, len(r.coeff))
+	for i := range coeffs {
+		coeffs[i] = r.coeff[i]
+	}
+	return coeffs
+}
+
 func (r *Regression) calcPredicted() string {
 	observations := len(r.data)
 	var predicted float64
