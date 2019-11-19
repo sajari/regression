@@ -2,6 +2,7 @@ package regression
 
 import (
 	"fmt"
+	"math"
 	"testing"
 )
 
@@ -154,5 +155,34 @@ func TestMakeDataPoints(t *testing.T) {
 			t.Error("Expected observed to be the same as the index")
 		}
 	}
+}
 
+func TestGetCoeffs(t *testing.T) {
+	a := [][]float64{
+		{651, 1, 23},
+		{762, 2, 26},
+		{856, 3, 30},
+		{1063, 4, 34},
+		{1190, 5, 43},
+		{1298, 6, 48},
+		{1421, 7, 52},
+		{1440, 8, 57},
+		{1518, 9, 58},
+	}
+
+	r := new(Regression)
+	r.Train(MakeDataPoints(a, 0)...)
+	r.Run()
+
+	coeffs := r.GetCoeffs()
+	if len(coeffs) != 3 {
+		t.Errorf("Expected 3 coefficients. Got %v instead", len(coeffs))
+	}
+
+	expected := []float64{323.54, 46.60, 13.99}
+	for i := range expected {
+		if math.Abs(expected[i]-coeffs[i]) > 0.01 {
+			t.Errorf("Expected coefficient %v to be %v. Got %v instead", i, expected[i], coeffs[i])
+		}
+	}
 }
