@@ -14,7 +14,7 @@ var (
 	// ErrNotEnoughData signals that there weren't enough datapoint to train the model.
 	ErrNotEnoughData = errors.New("not enough data points")
 	// ErrTooManyVars signals that there are too many variables for the number of observations being made.
-	ErrTooManyVars = errors.New("not enough observations to to support this many variables")
+	ErrTooManyVars = errors.New("not enough observations to support this many variables")
 	// ErrRegressionRun signals that the Run method has already been called on the trained dataset.
 	ErrRegressionRun = errors.New("regression has already been run")
 )
