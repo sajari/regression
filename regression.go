@@ -8,6 +8,10 @@ import (
 	"strings"
 
 	"gonum.org/v1/gonum/mat"
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/plotutil"
+	"gonum.org/v1/plot/vg"
 )
 
 var (
@@ -301,6 +305,41 @@ func (r *Regression) String() string {
 	str += fmt.Sprintf("\nN = %v\nVariance observed = %v\nVariance Predicted = %v", len(r.data), r.Varianceobserved, r.VariancePredicted)
 	str += fmt.Sprintf("\nR2 = %v\n", r.R2)
 	return str
+}
+
+//Plot regression and return file path where its saved
+func (r *Regression) Plot() string {
+	if !r.initialised {
+		return errNotEnoughData.Error()
+	}
+
+	p, err := plot.New()
+	if err != nil {
+		panic(err)
+	}
+	p.Title.Text = r.GetObserved()
+	p.X.Label.Text = r.GetVar(1)
+	p.Y.Label.Text = r.GetVar(0)
+
+	observed := make(plotter.XYs, len(r.data))
+	predicted := make(plotter.XYs, len(r.data))
+	for i, d := range r.data {
+		observed[i].Y = d.Observed
+		observed[i].X = float64(i)
+		predicted[i].Y = d.Predicted
+		predicted[i].X = float64(i)
+	}
+
+	err = plotutil.AddLinePoints(p,
+		"Observed", observed,
+		"Predicted", predicted)
+	if err != nil {
+		panic(err)
+	}
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, "points.png"); err != nil {
+		panic(err)
+	}
+	return "points.png"
 }
 
 // MakeDataPoints makes a `[]*dataPoint` from a `[][]float64`. The expected fomat for the input is a row-major [][]float64.
