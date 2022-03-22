@@ -25,7 +25,7 @@ type Regression struct {
 	data              []*dataPoint
 	coeff             map[int]float64
 	R2                float64
-	Varianceobserved  float64
+	VarianceObserved  float64
 	VariancePredicted float64
 	initialised       bool
 	Formula           string
@@ -256,13 +256,13 @@ func (r *Regression) calcVariance() string {
 		obvar += math.Pow(r.data[i].Observed-obaverage, 2)
 		prvar += math.Pow(r.data[i].Predicted-praverage, 2)
 	}
-	r.Varianceobserved = obvar / float64(observations)
+	r.VarianceObserved = obvar / float64(observations)
 	r.VariancePredicted = prvar / float64(observations)
-	return fmt.Sprintf("N = %v\nVariance observed = %v\nVariance Predicted = %v\n", observations, r.Varianceobserved, r.VariancePredicted)
+	return fmt.Sprintf("N = %v\nVariance observed = %v\nVariance Predicted = %v\n", observations, r.VarianceObserved, r.VariancePredicted)
 }
 
 func (r *Regression) calcR2() string {
-	r.R2 = r.VariancePredicted / r.Varianceobserved
+	r.R2 = r.VariancePredicted / r.VarianceObserved
 	return fmt.Sprintf("R2 = %.2f", r.R2)
 }
 
@@ -298,7 +298,7 @@ func (r *Regression) String() string {
 		str += fmt.Sprintf("%v\n", d)
 	}
 	fmt.Println(r.calcResiduals())
-	str += fmt.Sprintf("\nN = %v\nVariance observed = %v\nVariance Predicted = %v", len(r.data), r.Varianceobserved, r.VariancePredicted)
+	str += fmt.Sprintf("\nN = %v\nVariance observed = %v\nVariance Predicted = %v", len(r.data), r.VarianceObserved, r.VariancePredicted)
 	str += fmt.Sprintf("\nR2 = %v\n", r.R2)
 	return str
 }
