@@ -31,6 +31,8 @@ type Regression struct {
 	Formula           string
 	crosses           []featureCross
 	hasRun            bool
+	prediction        describe
+	residuals         describe
 }
 
 type dataPoint struct {
@@ -43,6 +45,8 @@ type dataPoint struct {
 type describe struct {
 	obs  string
 	vars map[int]string
+	pred []float64
+	res  []float64
 }
 
 // DataPoints is a slice of *dataPoint
@@ -80,6 +84,27 @@ func (r *Regression) SetObserved(name string) {
 // GetObserved gets the name of the observed value.
 func (r *Regression) GetObserved() string {
 	return r.names.obs
+}
+
+func (r *Regression) SetPrediction(prediction []float64) {
+	r.prediction.pred = prediction
+}
+
+// GetPredictions returns a list of the prediction value.
+func (r *Regression) GetPredictions() []float64 {
+	var list []float64
+	for _, d := range r.data {
+		list = append(list, d.Predicted)
+	}
+	return list
+}
+
+// GetResiduals returns a list of the residuals value
+func (r *Regression) GetResiduals() []float64 {
+	return r.residuals.res
+}
+func (r *Regression) SetResidual(residuals []float64) {
+	r.residuals.res = residuals
 }
 
 // SetVar sets the name of variable i.
@@ -268,9 +293,16 @@ func (r *Regression) calcR2() string {
 
 func (r *Regression) calcResiduals() string {
 	str := fmt.Sprintf("Residuals:\nobserved|\tPredicted|\tResidual\n")
+	var list []float64
+	var resList []float64
 	for _, d := range r.data {
+		list = append(list, d.Predicted)
+		resList = append(resList, d.Observed-d.Predicted)
 		str += fmt.Sprintf("%.2f|\t%.2f|\t%.2f\n", d.Observed, d.Predicted, d.Observed-d.Predicted)
 	}
+	r.SetPrediction(list)
+	r.SetResidual(resList)
+	// fmt.Println(list)
 	str += "\n"
 	return str
 }
